@@ -1,4 +1,4 @@
-package models;
+package com.example.cebackend.models;
 
 import lombok.Data;
 

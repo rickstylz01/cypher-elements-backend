@@ -1,6 +1,6 @@
-package repository;
+package com.example.cebackend.repository;
 
-import models.User;
+import com.example.cebackend.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {

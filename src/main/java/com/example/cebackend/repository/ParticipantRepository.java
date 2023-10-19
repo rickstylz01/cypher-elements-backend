@@ -1,6 +1,6 @@
-package repository;
+package com.example.cebackend.repository;
 
-import models.Participant;
+import com.example.cebackend.models.Participant;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

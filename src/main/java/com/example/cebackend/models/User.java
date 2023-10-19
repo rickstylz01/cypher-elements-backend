@@ -1,4 +1,4 @@
-package models;
+package com.example.cebackend.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
