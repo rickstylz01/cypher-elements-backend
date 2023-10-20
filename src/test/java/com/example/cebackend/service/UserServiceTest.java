@@ -41,4 +41,19 @@ public class UserServiceTest {
     assertEquals("password", createdUser.getPassword());
     assertEquals("testUser", createdUser.getUserName());
   }
+
+  @Test
+  public void testFindByUserEmailAddressWithValidEmail() {
+    // Arrange
+    String emailAddress = "test@example.com";
+    User mockUser = new User();
+    when(userRepository.findUserByEmailAddress(emailAddress)).thenReturn(mockUser);
+
+    // Act
+    User foundUser = userService.findByUserEmailAddress(emailAddress);
+
+    // Assert
+    assertNotNull(foundUser);
+    assertEquals(mockUser, foundUser);
+  }
 }
