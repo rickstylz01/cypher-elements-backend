@@ -1,10 +1,10 @@
-package models;
+package com.example.cebackend.models;
 
 import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table
@@ -26,11 +26,10 @@ public class Event {
     @Column
     private String description;
 
-    @ManyToMany
-    @JoinTable(
-        name = "participant",
-        joinColumns = @JoinColumn(name = "event_id"),
-        inverseJoinColumns = @JoinColumn(name = "user_id")
+    @OneToMany(
+      mappedBy = "event",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true
     )
-    private Set<User> participants;
+    private List<Participant> participants;
 }
