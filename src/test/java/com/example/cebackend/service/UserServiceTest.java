@@ -8,8 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 
@@ -55,5 +54,18 @@ public class UserServiceTest {
     // Assert
     assertNotNull(foundUser);
     assertEquals(mockUser, foundUser);
+  }
+
+  @Test
+  public void testFindByUserEmailAddressWithNonExistentEmail() {
+    // Arrange
+    String nonExistentEmail = "nonexistentemail@example.com";
+    when(userRepository.findUserByEmailAddress(nonExistentEmail)).thenReturn(null);
+
+    // Act
+    User foundUser = userService.findByUserEmailAddress(nonExistentEmail);
+
+    // Assert
+    assertNull(foundUser);
   }
 }
