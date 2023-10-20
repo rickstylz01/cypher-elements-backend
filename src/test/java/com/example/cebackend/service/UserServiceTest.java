@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
@@ -36,5 +37,8 @@ public class UserServiceTest {
 
     // Assert
     assertNotNull(createdUser);
+    assertEquals("test@example.com", createdUser.getEmailAddress());
+    assertEquals("password", createdUser.getPassword());
+    assertEquals("testUser", createdUser.getUserName());
   }
 }
