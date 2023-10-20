@@ -1,6 +1,5 @@
 package com.example.cebackend.repository;
 
-import com.example.cebackend.models.Event;
 import com.example.cebackend.models.Participant;
 import com.example.cebackend.models.User;
 import org.junit.Test;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.servlet.http.Part;
 import java.util.List;
 import java.util.Optional;
 
