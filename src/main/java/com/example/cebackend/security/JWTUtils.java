@@ -35,6 +35,21 @@ public class JWTUtils {
       .compact();
   }
 
+  public String getUserNameFromJwtToken(String token) {
+    return Jwts.parserBuilder()
+      .setSigningKey(jwtSecret)
+      .build()
+      .parseClaimsJws(token)
+      .getBody()
+      .getSubject();
+  }
+
+  /**
+   * Validate the authenticity and expiration of a JWT token.
+   *
+   * @param token The JWT token to validate.
+   * @return true if the token is valid, false otherwise.
+   */
   public boolean validateJwtToken(String token) {
     try {
       Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);

@@ -110,4 +110,20 @@ public class JWTUtilsTest {
     // Assert
     assertFalse(isValid);
   }
+
+  @Test
+  public void testGetUserNameFromJwtToken() {
+    // Arrange
+    User user = new User();
+    user.setEmailAddress("testuser@example.com");
+    user.setPassword("password");
+    MyUserDetails userDetails = new MyUserDetails(user);
+    String validToken = jwtUtils.generateJwtToken(userDetails);
+
+    // Act
+    String extractedUsername = jwtUtils.getUserNameFromJwtToken(validToken);
+
+    // Assert
+    assertEquals("testuser@example.com", extractedUsername);
+  }
 }
