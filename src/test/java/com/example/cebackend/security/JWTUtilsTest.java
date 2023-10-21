@@ -1,6 +1,7 @@
 package com.example.cebackend.security;
 
 import com.example.cebackend.models.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.Before;
@@ -83,6 +84,18 @@ public class JWTUtilsTest {
 
     // Act
     boolean isValid = jwtUtils.validateJwtToken(expiredToken);
+
+    // Assert
+    assertFalse(isValid);
+  }
+
+  @Test
+  public void testValidateJwtTokenWithEmptyToken() {
+    // Arrange
+    String emptyToken = "";
+
+    // Act
+    boolean isValid = jwtUtils.validateJwtToken(emptyToken);
 
     // Assert
     assertFalse(isValid);
