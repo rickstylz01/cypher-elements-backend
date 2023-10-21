@@ -100,4 +100,14 @@ public class JWTUtilsTest {
     // Assert
     assertFalse(isValid);
   }
+
+  @Test
+  public void testValidateJwtTokenWithNullToken() {
+    // Arrange
+    // Act
+    boolean isValid = jwtUtils.validateJwtToken(null);
+
+    // Assert
+    assertFalse(isValid);
+  }
 }
