@@ -1,5 +1,6 @@
 package com.example.cebackend.security;
 
+import com.example.cebackend.models.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.Before;
@@ -14,8 +15,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -27,7 +27,7 @@ public class JWTUtilsTest {
   @InjectMocks
   private JWTUtils jwtUtils;
 
-  // set the values of 'jwtExpMs' and 'jwtSecret' in 'JWTUtils to ensure the properties are properly injected for testing.
+  // set the values of 'jwtExpMs' and 'jwtSecret' in 'JWTUtils' to ensure the properties are properly injected for testing.
   @Before
   public void setUp() {
     ReflectionTestUtils.setField(jwtUtils, "jwtExpMs", 3600000);
@@ -54,5 +54,21 @@ public class JWTUtilsTest {
       .signWith(SignatureAlgorithm.HS256, jwtUtils.getJwtSecret())
       .compact();
     assertEquals(expectedToken, token);
+  }
+
+  @Test
+  public void testValidateJwtTokenWithValidToken() {
+    // Arrange
+    User user = new User();
+    user.setEmailAddress("testuser@example.com");
+    user.setPassword("password");
+    MyUserDetails userDetails = new MyUserDetails(user);
+    String validToken = jwtUtils.generateJwtToken(userDetails);
+
+    // Act
+    boolean isValid = jwtUtils.validateJwtToken(validToken);
+
+    // Assert
+    assertTrue(isValid);
   }
 }
