@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -70,5 +69,22 @@ public class JWTUtilsTest {
 
     // Assert
     assertTrue(isValid);
+  }
+
+  @Test
+  public void testValidateJwtTokenWithExpiredToken() {
+    // Arrange
+    String expiredToken = Jwts.builder()
+      .setSubject("testuser")
+      .setIssuedAt(new Date(System.currentTimeMillis() - 10000))  // 10 seconds ago (expired token)
+      .setExpiration(new Date(System.currentTimeMillis() - 5000))   // 5 seconds ago (expired token)
+      .signWith(SignatureAlgorithm.HS256, jwtUtils.getJwtSecret())
+      .compact();
+
+    // Act
+    boolean isValid = jwtUtils.validateJwtToken(expiredToken);
+
+    // Assert
+    assertFalse(isValid);
   }
 }
