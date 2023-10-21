@@ -6,8 +6,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -25,9 +27,17 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.authorizeRequests().antMatchers("/h2-console/**").permitAll()
+    http.authorizeRequests().antMatchers("/auth/users", "/auth/users/login/", "/auth/users/register/").permitAll()
+      .antMatchers("/h2-console/**").permitAll()
+      .antMatchers("/auth/users/hello/").permitAll()
+      .antMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+      .anyRequest().authenticated()
+      .and().sessionManagement()
+      .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Set session creation policy to STATELESS.
       .and().csrf().disable()
-      .headers().frameOptions().disable();
+      .headers().frameOptions().disable(); // Disable frame options for h2-console.
+    // Add the JwtRequestFilter before the default UsernamePasswordAuthenticationFilter.
+    http.addFilterBefore(authJwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }
 
