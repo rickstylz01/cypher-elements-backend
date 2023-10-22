@@ -1,11 +1,11 @@
 package com.example.cebackend.models.request;
 
-import lombok.Getter;
+import lombok.Data;
 
 /**
  * A class representing a login request, containing the user's email address and password.
  */
-@Getter
+@Data
 public class LoginRequest {
   private String emailAddress;
 
