@@ -27,15 +27,17 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.authorizeRequests().antMatchers("/auth/users", "/auth/users/login/", "/auth/users/register/").permitAll()
+    http.authorizeRequests()
+      .antMatchers("/auth/users/login/", "/auth/users/register/").permitAll()
       .antMatchers("/h2-console/**").permitAll()
-      .antMatchers("/auth/users/hello/").permitAll()
-      .antMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
       .anyRequest().authenticated()
-      .and().sessionManagement()
+      .and()
+      .sessionManagement()
       .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Set session creation policy to STATELESS.
-      .and().csrf().disable()
+      .and()
+      .csrf().disable()
       .headers().frameOptions().disable(); // Disable frame options for h2-console.
+      http.cors(); // Enable CORS
     // Add the JwtRequestFilter before the default UsernamePasswordAuthenticationFilter.
     http.addFilterBefore(authJwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
     return http.build();
