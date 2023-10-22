@@ -1,5 +1,6 @@
 package com.example.cebackend.service;
 
+import com.example.cebackend.exceptions.InformationExistException;
 import com.example.cebackend.models.User;
 import com.example.cebackend.repository.UserRepository;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class UserServiceTest {
   private UserService userService;
 
   @Test
-  public void testCreatUser() {
+  public void testCreatUserWhenEmailDoesNotExist() {
     // Arrange
     User user = new User();
     user.setEmailAddress("test@example.com");
@@ -39,6 +40,23 @@ public class UserServiceTest {
     assertEquals("test@example.com", createdUser.getEmailAddress());
     assertEquals("password", createdUser.getPassword());
     assertEquals("testUser", createdUser.getUserName());
+  }
+
+  @Test(expected = InformationExistException.class)
+  public void testCreateUserWhenEmailExists() {
+    // Arrange
+    User existingUser = new User();
+    existingUser.setEmailAddress("test@example.com");
+    existingUser.setPassword("existingPassword");
+    existingUser.setUserName("existingUser");
+
+    when(userRepository.existsByEmailAddress(existingUser.getEmailAddress())).thenReturn(true);
+
+    // Act
+    userService.createUser(existingUser);
+
+    // Assert
+    // Expect Exception
   }
 
   @Test
