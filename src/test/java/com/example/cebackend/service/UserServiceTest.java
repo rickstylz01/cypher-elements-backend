@@ -8,14 +8,14 @@ import com.example.cebackend.security.JWTUtils;
 import com.example.cebackend.security.MyUserDetails;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -23,11 +23,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
+@MockitoSettings(strictness = Strictness.LENIENT) // keeps necessary stubbings for specific test cases
 public class UserServiceTest {
   @Mock
   private UserRepository userRepository;
@@ -114,10 +114,6 @@ public class UserServiceTest {
     loginRequest.setEmailAddress(user.getEmailAddress());
     loginRequest.setPassword(user.getPassword());
 
-    // Mocking the user retrieval by the service
-    when(userRepository.findUserByEmailAddress(emailAddress)).thenReturn(user);
-    when(passwordEncoder.matches(password, user.getPassword())).thenReturn(true);
-
     // Mocking authentication manager behavior
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(emailAddress, password);
     Authentication authentication = new UsernamePasswordAuthenticationToken(new MyUserDetails(user), null);
@@ -147,10 +143,6 @@ public class UserServiceTest {
     LoginRequest loginRequest = new LoginRequest();
     loginRequest.setEmailAddress(emailAddress);
     loginRequest.setPassword(password);
-
-    // Mock the user retrieval by the service
-    when(userRepository.findUserByEmailAddress(emailAddress)).thenReturn(user);
-    when(passwordEncoder.matches(password, user.getPassword())).thenReturn(false);
 
     // Act
     Optional<String> jwtToken = userService.loginUser(loginRequest);
