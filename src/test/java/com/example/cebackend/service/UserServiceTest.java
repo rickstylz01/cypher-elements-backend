@@ -96,10 +96,6 @@ public class UserServiceTest {
     assertEquals("encodedPassword", createdUser.getPassword());
   }
 
-  private String encodePassword(String password) {
-    return BCrypt.hashpw(password, BCrypt.gensalt());
-  }
-
   @Test
   public void testLoginUserWithValidCredentials() {
     // Arrange
