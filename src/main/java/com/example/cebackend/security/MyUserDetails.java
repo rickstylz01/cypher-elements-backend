@@ -8,9 +8,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.HashSet;
 
-@AllArgsConstructor
 public class MyUserDetails implements UserDetails {
   private final User user;
+
+  public MyUserDetails(User user) {
+    this.user = user;
+  }
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return new HashSet<>();
