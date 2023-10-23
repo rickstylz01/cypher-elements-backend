@@ -105,4 +105,30 @@ public class EventServiceTest {
     assertEquals(event1.getName(), createdEvent.getName());
     assertEquals(event1.getEventDate(), createdEvent.getEventDate());
   }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateEventWithNullEvent() {
+    eventService.createEvent(null);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateEventWithNullName() {
+    Event event = new Event();
+    event.setName(null);
+    eventService.createEvent(event);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateEventWithEmptyName() {
+    Event event = new Event();
+    event.setName("");
+    eventService.createEvent(event);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateEventWithPastDate() {
+    Event event = new Event();
+    event.setEventDate(LocalDate.now().minusDays(1)); // Set a past date
+    eventService.createEvent(event);
+  }
 }
