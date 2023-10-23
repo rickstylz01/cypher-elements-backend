@@ -1,5 +1,6 @@
 package com.example.cebackend.service;
 
+import com.example.cebackend.exceptions.InformationNotFoundException;
 import com.example.cebackend.models.Event;
 import com.example.cebackend.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,40 @@ public class EventService {
     return eventRepository.save(event);
   }
 
+  public Event updateEvent(Long eventId, Event updatedEvent) {
+    // Check for valid eventId
+    if (eventId == null || eventId <= 0) {
+      throw new IllegalArgumentException("Invalid eventId");
+    }
+
+    Optional<Event> existingEventOptional = eventRepository.findById(eventId);
+    if (existingEventOptional.isPresent()) {
+      Event existingEvent = existingEventOptional.get();
+
+      // Checking for null or empty name in the updatedEvent
+      if (updatedEvent.getName() != null && !updatedEvent.getName().trim().isEmpty()) {
+        existingEvent.setName(updatedEvent.getName());
+      }
+
+      // Checking for null or empty eventDate
+      if (updatedEvent.getEventDate() != null && updatedEvent.getEventDate().isAfter(LocalDate.now())) {
+        existingEvent.setEventDate(updatedEvent.getEventDate());
+      }
+
+      // Checking for null or empty venue
+      if (updatedEvent.getVenue() != null && !updatedEvent.getVenue().trim().isEmpty()) {
+        existingEvent.setVenue(updatedEvent.getVenue());
+      }
+
+      if (updatedEvent.getDescription() != null && !updatedEvent.getDescription().trim().isEmpty()) {
+        existingEvent.setDescription(updatedEvent.getDescription());
+      }
+
+      return eventRepository.save(existingEvent);
+    } else {
+      throw new InformationNotFoundException("Event with id: " + eventId + ", not found.");
+    }
+  }
 
 }
 

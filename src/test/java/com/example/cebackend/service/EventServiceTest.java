@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -130,5 +131,31 @@ public class EventServiceTest {
     Event event = new Event();
     event.setEventDate(LocalDate.now().minusDays(1)); // Set a past date
     eventService.createEvent(event);
+  }
+
+  @Test
+  public void testUpdateEvent() {
+    // Arrange
+    Long eventId = 1L;
+
+    Event existingEvent = new Event();
+    existingEvent.setId(eventId);
+    existingEvent.setName("Old Event Name");
+
+    Event updatedEvent = new Event();
+    updatedEvent.setId(eventId);
+    updatedEvent.setName("New Event Name");
+
+    // Mock eventRepository.findById(id) and eventRepository.save(event)
+    when(eventRepository.findById(eventId)).thenReturn(Optional.of(existingEvent));
+    when(eventRepository.save(existingEvent)).thenReturn(updatedEvent);
+
+    // Act
+    Event result = eventService.updateEvent(eventId, updatedEvent);
+
+    // Assert
+    assertNotNull(result);
+    assertEquals("New Event Name", result.getName());
+    verify(eventRepository).save(existingEvent);
   }
 }
