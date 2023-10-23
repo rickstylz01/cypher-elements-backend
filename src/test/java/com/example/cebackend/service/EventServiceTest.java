@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EventServiceTest {
@@ -157,5 +156,17 @@ public class EventServiceTest {
     assertNotNull(result);
     assertEquals("New Event Name", result.getName());
     verify(eventRepository).save(existingEvent);
+  }
+
+  @Test
+  public void testDeleteEvent() {
+    // Arrange
+    Long eventId = 1L;
+
+    // Act
+    eventService.deleteEvent(eventId);
+
+    // Assert
+    verify(eventRepository, times(1)).deleteById(eventId);
   }
 }

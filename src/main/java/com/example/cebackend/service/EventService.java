@@ -60,6 +60,12 @@ public class EventService {
     return eventRepository.save(event);
   }
 
+  /**
+   * Update an existing event with the provided event ID using the details from the updated event.
+   * @param eventId The unique identifier of the event to be updated
+   * @param updatedEvent The Event object containing updated information to be applied to the existing event
+   * @return The updated Event object after modifications, saved back in the event repository
+   */
   public Event updateEvent(Long eventId, Event updatedEvent) {
     // Check for valid eventId
     if (eventId == null || eventId <= 0) {
@@ -93,6 +99,15 @@ public class EventService {
     } else {
       throw new InformationNotFoundException("Event with id: " + eventId + ", not found.");
     }
+  }
+
+  public void deleteEvent(Long eventId) {
+    // Check for valid eventId
+    if (eventId == null || eventId <= 0) {
+      throw new IllegalArgumentException("Invalid eventId");
+    }
+
+    eventRepository.deleteById(eventId);
   }
 
 }
