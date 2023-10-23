@@ -19,6 +19,9 @@ public class TestSetupDefs {
   // Content-Type Json
   public static final String TypeJson = "application/json";
 
+  // Event Endpoints
+  public static final String createEventEndpoint = "/api/events/create/";
+
   @LocalServerPort
   public String port;
 }
