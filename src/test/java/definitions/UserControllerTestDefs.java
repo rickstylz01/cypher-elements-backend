@@ -80,4 +80,23 @@ public class UserControllerTestDefs extends TestSetupDefs {
     String message = jsonPath.get("message");
     Assert.assertEquals("success", message);
   }
+
+  @Given("The registered user exists")
+  public void theRegisteredUserExists() throws JSONException {
+    RequestSpecification request = RestAssured.given();
+    JSONObject jsonObject = new JSONObject();
+    jsonObject.put("emailAddress", "test@example.com");
+    jsonObject.put("password","password123");
+    response = request.contentType(ContentType.JSON).body(jsonObject.toString()).post(BASE_URL + port + loginEndpoint);
+  }
+
+  @When("The user details are validated")
+  public void theUserDetailsAreValidated() {
+    Assert.assertEquals(200, response.getStatusCode());
+  }
+
+  @Then("The user receives a jwt token")
+  public void theUserReceivesAJwtToken() {
+    Assert.assertNotNull(response.jsonPath().getString("jwt"));
+  }
 }
