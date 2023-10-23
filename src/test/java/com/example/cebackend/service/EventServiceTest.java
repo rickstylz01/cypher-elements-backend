@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,5 +81,28 @@ public class EventServiceTest {
     assertEquals("Event Two", foundEvent2.get().getName());
 
     assertFalse(nonExistentEvent.isPresent());
+  }
+
+  @Test
+  public void testCreateEvent() {
+    // Arrange
+    Event event1 = new Event();
+    event1.setId(1L);
+    event1.setName("Event One");
+    event1.setEventDate(LocalDate.of(2023, 10, 23));
+    event1.setVenue("Event Theater");
+    event1.setDescription("Description for the Event Venue");
+
+    // Mock eventRepository.save()
+    when(eventRepository.save(event1)).thenReturn(event1);
+
+    // Act
+    Event createdEvent = eventService.createEvent(event1);
+
+    // Assert
+    assertNotNull(createdEvent);
+    assertNotNull(createdEvent.getId());
+    assertEquals(event1.getName(), createdEvent.getName());
+    assertEquals(event1.getEventDate(), createdEvent.getEventDate());
   }
 }
