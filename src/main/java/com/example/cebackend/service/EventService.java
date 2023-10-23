@@ -101,6 +101,10 @@ public class EventService {
     }
   }
 
+  /**
+   * Deletes an event from the system using its unique identifier
+   * @param eventId The unique identifier of the event to be deleted.
+   */
   public void deleteEvent(Long eventId) {
     // Check for valid eventId
     if (eventId == null || eventId <= 0) {
