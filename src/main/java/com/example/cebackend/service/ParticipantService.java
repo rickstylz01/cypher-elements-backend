@@ -131,10 +131,17 @@ public class ParticipantService {
    * Deletes a participant from the system using its unique identifier
    * @param participantId The unique identifier of the participant to be deleted.
    */
-  public void deleteParticipant(Long participantId) {
-    Participant participant = participantRepository.findById(participantId)
-      .orElseThrow(() -> new InformationNotFoundException("Participant with ID: " + participantId + ", not found."));
+  public void deleteParticipant(Long participantId, Long eventId) {
+    Event event = eventRepository.findById(eventId)
+      .orElseThrow(() -> new InformationNotFoundException("Event with ID: " + eventId + ", not found"));
 
-    participantRepository.delete(participant);
+    Participant participant = event.getParticipants().stream()
+      .filter(p -> p.getId().equals(participantId))
+      .findFirst()
+      .orElseThrow(() -> new InformationNotFoundException("Participant with ID: " + participantId + ", not found"));
+
+    event.getParticipants().remove(participant);
+    logger.info("Updated event: " + event);
+    eventRepository.save(event);
   }
 }
