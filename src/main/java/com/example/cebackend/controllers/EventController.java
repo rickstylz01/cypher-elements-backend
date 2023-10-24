@@ -1,5 +1,6 @@
 package com.example.cebackend.controllers;
 
+import com.example.cebackend.exceptions.InformationExistException;
 import com.example.cebackend.models.Event;
 import com.example.cebackend.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +25,16 @@ public class EventController {
 
   @PostMapping("/")
   public ResponseEntity<?> createEvent(@RequestBody Event event) {
-    Event createdEvent = eventService.createEvent(event);
-    message.put("message", "success");
-    message.put("data", createdEvent);
-    return new ResponseEntity<>(message, HttpStatus.CREATED);
+    try {
+      Event createdEvent = eventService.createEvent(event);
+      message.put("message", "success, event created");
+      message.put("data", createdEvent);
+      return new ResponseEntity<>(message, HttpStatus.CREATED);
+    } catch (InformationExistException e) {
+      message.put("message", "unable to create event");
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+    }
+
   }
 
   @GetMapping("/")
