@@ -66,4 +66,17 @@ public class EventController {
       return new ResponseEntity<>("Error updating event", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  @DeleteMapping("/{eventId}/")
+  public ResponseEntity<?> deleteEvent(@PathVariable Long eventId) {
+    try {
+      eventService.deleteEvent(eventId);
+      message.put("message", "Event with id: " + eventId  + ", successfully deleted");
+      return new ResponseEntity<>(message, HttpStatus.OK);
+    } catch (IllegalArgumentException e) {
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    } catch (Exception e) {
+      return new ResponseEntity<>("Error deleteing event", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
