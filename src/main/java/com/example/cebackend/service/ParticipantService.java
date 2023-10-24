@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @Service
 public class ParticipantService {
@@ -18,6 +19,7 @@ public class ParticipantService {
   private final ParticipantRepository participantRepository;
   private final UserRepository userRepository;
   private final EventRepository eventRepository;
+  private static final Logger logger = Logger.getLogger(ParticipantService.class.getName());
 
   @Autowired
   public ParticipantService(ParticipantRepository participantRepository, UserRepository userRepository, EventRepository eventRepository) {
@@ -32,14 +34,29 @@ public class ParticipantService {
    * @param eventId The unique identifier of the event to be associated with the participant.
    * @return The created Participant object after being saved in the participant repository.
    */
-  public Participant creatParticipant(Long userId, Long eventId) {
-    User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
-    Event event = eventRepository.findById(eventId).orElseThrow(() -> new IllegalArgumentException("Event not found with ID: " + eventId));
+  public Participant createParticipant(Long userId, Long eventId) {
+    logger.info("Creating participant for userId: " + userId + " and eventId: " + eventId);
+
+    User user = userRepository.findById(userId)
+      .orElseThrow(() -> {
+        logger.severe("User not found with ID: " + userId);
+        return new IllegalArgumentException("User not found with ID: " + userId);
+      });
+
+    Event event = eventRepository.findById(eventId)
+      .orElseThrow(() -> {
+        logger.severe("Event not found with ID: " + eventId);
+        return new IllegalArgumentException("Event not found with ID: " + eventId);
+      });
 
     Participant participant = new Participant();
     participant.setUser(user);
     participant.setEvent(event);
-    return participantRepository.save(participant);
+    Participant savedParticipant = participantRepository.save(participant);
+
+    logger.info("Participant created with ID: " + savedParticipant.getId());
+
+    return savedParticipant;
   }
 
   /**
