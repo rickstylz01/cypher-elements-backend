@@ -11,6 +11,7 @@ import com.example.cebackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -38,54 +39,92 @@ public class ParticipantService {
   public RSVPResponse createParticipant(Long userId, Long eventId) {
     logger.info("Creating participant for userId: " + userId + " and eventId: " + eventId);
 
-    User user = userRepository.findById(userId)
-      .orElseThrow(() -> {
-        logger.severe("User not found with ID: " + userId);
-        return new IllegalArgumentException("User not found with ID: " + userId);
-      });
-
-    Event event = eventRepository.findById(eventId)
-      .orElseThrow(() -> {
-        logger.severe("Event not found with ID: " + eventId);
-        return new IllegalArgumentException("Event not found with ID: " + eventId);
-      });
+    User user = getUserById(userId);
+    Event event = getEventById(eventId);
 
     Participant participant = new Participant();
     participant.setUser(user);
     participant.setEvent(event);
     Participant savedParticipant = participantRepository.save(participant);
 
+    return createRSVPResponse(savedParticipant);
+  }
+
+  /**
+   * Retrieves a user by their unique identifier from the user repository
+   * @param userId The unique identifier of the user to be retrieved
+   * @return The User object associated with the provided ID
+   */
+  private User getUserById(Long userId) {
+    return userRepository.findById(userId)
+      .orElseThrow(() -> new InformationNotFoundException("User with ID: " + userId + ", not found"));
+  }
+
+  /**
+   * Retrieves an event by its unique identifier from the event repository
+   * @param eventId The unique identifier of the event to be retrieved
+   * @return The Event object associated with the provided ID
+   */
+  private Event getEventById(Long eventId) {
+    return eventRepository.findById(eventId)
+      .orElseThrow(() -> new InformationNotFoundException("User with ID: " + eventId + ", not found"));
+  }
+
+  /**
+   * Creates an RSVPResponse object based on participant details.
+   * @param participant The Participant object from which to create the RSVPResponse
+   * @return The created RSVPResponse object with user and event details
+   */
+  private RSVPResponse createRSVPResponse(Participant participant) {
     RSVPResponse rsvpResponse = new RSVPResponse();
-    rsvpResponse.setUserName(savedParticipant.getUser().getUserName());
-    rsvpResponse.setEmailAddress(savedParticipant.getUser().getEmailAddress());
-    rsvpResponse.setEventId(savedParticipant.getEvent().getId());
-    rsvpResponse.setEventName(savedParticipant.getEvent().getName());
-    rsvpResponse.setVenue(savedParticipant.getEvent().getVenue());
-    rsvpResponse.setDescription(savedParticipant.getEvent().getDescription());
+    User user = participant.getUser();
+    Event event = participant.getEvent();
 
-    logger.info("Participant created with ID: " + savedParticipant.getId());
+    rsvpResponse.setUserName(user.getUserName());
+    rsvpResponse.setEmailAddress(user.getEmailAddress());
+    rsvpResponse.setEventId(event.getId());
+    rsvpResponse.setEventName(event.getName());
+    rsvpResponse.setVenue(event.getVenue());
+    rsvpResponse.setDescription(event.getDescription());
 
+    logger.info("Participant created with ID: " + participant.getId());
     return rsvpResponse;
   }
 
   /**
-   * Retrieves a list of participants for a specific event
+   * Retrieves a list of RSVPResponse objects representing participants for a specific event
    * @param eventId The unique identifier of the event for which participants are to be retrieved
    * @return A List of Participant objects associated with the specified event
    */
-  public List<Participant> getParticipantsForEvents(Long eventId) {
-    Event event = eventRepository.findById(eventId).orElseThrow(() -> new IllegalArgumentException("Event not found with ID: " + eventId));
-    return event.getParticipants();
+  public List<RSVPResponse> getParticipantsForEvents(Long eventId) {
+    Event event = eventRepository.findById(eventId)
+      .orElseThrow(() -> new InformationNotFoundException("Event not found with ID: " + eventId));
+
+    List<RSVPResponse> responseList = new ArrayList<>();
+    for (Participant participant : event.getParticipants()) {
+      RSVPResponse rsvpResponse = createRSVPResponse(participant);
+      responseList.add(rsvpResponse);
+    }
+
+    return responseList;
   }
 
   /**
-   * Retrieves a list of events in which a specific user is a participant.
+   * Retrieves a list of RSVPResponse objects representing events in which a user is a participant
    * @param userId The unique identifier of the user for whom events are to be retrieved
-   * @return A List of Participant objects representing events in which the specified user is a participant
+   * @return A List of RSVPResponse objects representing events in which the specified user is a participant
    */
-  public List<Participant> getEventsForUser(Long userId) {
-    User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
-    return user.getParticipants();
+  public List<RSVPResponse> getEventsForUser(Long userId) {
+    User user = userRepository.findById(userId)
+      .orElseThrow(() -> new InformationNotFoundException("User not found with ID: " + userId));
+
+    List<RSVPResponse> responseList = new ArrayList<>();
+    for (Participant participant : user.getParticipants()) {
+      RSVPResponse rsvpResponse = createRSVPResponse(participant);
+      responseList.add(rsvpResponse);
+    }
+
+    return responseList;
   }
 
   /**
