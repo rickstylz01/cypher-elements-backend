@@ -2,6 +2,7 @@ package com.example.cebackend.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -29,8 +30,9 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.authorizeRequests()
       .antMatchers("/auth/users/login/", "/auth/users/register/").permitAll()
-      .antMatchers("/api/events/", "/api/events/**").permitAll()
-//      .antMatchers("/api/events/create/").authenticated()
+      .antMatchers(HttpMethod.GET,"/api/events/", "/api/events/**").permitAll()
+      .antMatchers(HttpMethod.POST, "/api/events/").authenticated()
+      .antMatchers(HttpMethod.PUT, "/api/events/**").authenticated()
       .antMatchers("/h2-console/**").permitAll()
       .antMatchers("/auth/users/hello/").permitAll()
       .anyRequest().authenticated()
