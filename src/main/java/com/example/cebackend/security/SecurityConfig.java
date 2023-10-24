@@ -29,7 +29,8 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.authorizeRequests()
       .antMatchers("/auth/users/login/", "/auth/users/register/").permitAll()
-      .antMatchers("/api/events/").permitAll()
+      .antMatchers("/api/events/", "/api/events/**").permitAll()
+//      .antMatchers("/api/events/create/").authenticated()
       .antMatchers("/h2-console/**").permitAll()
       .antMatchers("/auth/users/hello/").permitAll()
       .anyRequest().authenticated()
