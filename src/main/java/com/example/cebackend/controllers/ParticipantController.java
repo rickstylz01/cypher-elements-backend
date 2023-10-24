@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/participants")
@@ -39,6 +40,21 @@ public class ParticipantController {
     }
   }
 
-//  @GetMapping("/user/{userId}/")
-//  public ResponseEntity<?> getEventsForUser()
+  @GetMapping("/user/{userId}/")
+  public ResponseEntity<?> getEventsForUser(@PathVariable Long userId) {
+    try {
+      List<RSVPResponse> events = participantService.getEventsForUser(userId);
+      message.put("message", "success");
+      message.put("data", events);
+      return new ResponseEntity<>(message, HttpStatus.OK);
+    } catch (InformationNotFoundException e) {
+      message.put("message", e.getMessage());
+      return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+  }
+
+//  @GetMapping("/event/{eventId}/participants/")
+//  public ResponseEntity<?> getParticipantsForEvent(@PathVariable Long eventId) {
+//
+//  }
 }
