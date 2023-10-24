@@ -52,13 +52,24 @@ public class ParticipantController {
     }
   }
 
-  // TODO: figure out if I keep this controller here or move to event controller. Or, change url path.
   @GetMapping("/event/{eventId}/")
   public ResponseEntity<?> getParticipantsForEvent(@PathVariable Long eventId) {
     try {
       List<RSVPResponse> participants = participantService.getParticipantsForEvents(eventId);
       message.put("message", "success");
       message.put("data", participants);
+      return new ResponseEntity<>(message, HttpStatus.OK);
+    } catch (InformationNotFoundException e) {
+      message.put("message", e.getMessage());
+      return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  @DeleteMapping("/{participantId}/event/{eventId}/")
+  public ResponseEntity<?> deleteParticipant(@PathVariable Long participantId, @PathVariable Long eventId) {
+    try {
+      participantService.deleteParticipant(participantId, eventId);
+      message.put("message", "participant with ID: " + participantId + ", successfully deleted");
       return new ResponseEntity<>(message, HttpStatus.OK);
     } catch (InformationNotFoundException e) {
       message.put("message", e.getMessage());
