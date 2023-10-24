@@ -2,7 +2,6 @@ package com.example.cebackend.controllers;
 
 import com.example.cebackend.exceptions.InformationExistException;
 import com.example.cebackend.exceptions.InformationNotFoundException;
-import com.example.cebackend.models.Participant;
 import com.example.cebackend.models.response.RSVPResponse;
 import com.example.cebackend.service.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,7 @@ public class ParticipantController {
     }
   }
 
-  @GetMapping("/user/{userId}/")
+  @GetMapping("/{userId}/")
   public ResponseEntity<?> getEventsForUser(@PathVariable Long userId) {
     try {
       List<RSVPResponse> events = participantService.getEventsForUser(userId);
@@ -53,8 +52,17 @@ public class ParticipantController {
     }
   }
 
-//  @GetMapping("/event/{eventId}/participants/")
-//  public ResponseEntity<?> getParticipantsForEvent(@PathVariable Long eventId) {
-//
-//  }
+  // TODO: figure out if I keep this controller here or move to event controller. Or, change url path.
+  @GetMapping("/event/{eventId}/")
+  public ResponseEntity<?> getParticipantsForEvent(@PathVariable Long eventId) {
+    try {
+      List<RSVPResponse> participants = participantService.getParticipantsForEvents(eventId);
+      message.put("message", "success");
+      message.put("data", participants);
+      return new ResponseEntity<>(message, HttpStatus.OK);
+    } catch (InformationNotFoundException e) {
+      message.put("message", e.getMessage());
+      return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    }
+  }
 }
