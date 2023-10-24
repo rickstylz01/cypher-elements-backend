@@ -3,6 +3,7 @@ package com.example.cebackend.controllers;
 import com.example.cebackend.exceptions.InformationExistException;
 import com.example.cebackend.exceptions.InformationNotFoundException;
 import com.example.cebackend.models.Participant;
+import com.example.cebackend.models.response.RSVPResponse;
 import com.example.cebackend.service.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class ParticipantController {
   @PostMapping("/")
   public ResponseEntity<?> createParticipant(@RequestParam Long userId, @RequestParam Long eventId) {
     try {
-      Participant participant = participantService.createParticipant(userId, eventId);
+      RSVPResponse participant = participantService.createParticipant(userId, eventId);
       message.put("message", "success, participant created");
       message.put("data", participant);
       return new ResponseEntity<>(message, HttpStatus.CREATED);

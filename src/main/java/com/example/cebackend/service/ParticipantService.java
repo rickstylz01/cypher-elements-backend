@@ -4,6 +4,7 @@ import com.example.cebackend.exceptions.InformationNotFoundException;
 import com.example.cebackend.models.Event;
 import com.example.cebackend.models.Participant;
 import com.example.cebackend.models.User;
+import com.example.cebackend.models.response.RSVPResponse;
 import com.example.cebackend.repository.EventRepository;
 import com.example.cebackend.repository.ParticipantRepository;
 import com.example.cebackend.repository.UserRepository;
@@ -34,7 +35,7 @@ public class ParticipantService {
    * @param eventId The unique identifier of the event to be associated with the participant.
    * @return The created Participant object after being saved in the participant repository.
    */
-  public Participant createParticipant(Long userId, Long eventId) {
+  public RSVPResponse createParticipant(Long userId, Long eventId) {
     logger.info("Creating participant for userId: " + userId + " and eventId: " + eventId);
 
     User user = userRepository.findById(userId)
@@ -54,9 +55,17 @@ public class ParticipantService {
     participant.setEvent(event);
     Participant savedParticipant = participantRepository.save(participant);
 
+    RSVPResponse rsvpResponse = new RSVPResponse();
+    rsvpResponse.setUserName(savedParticipant.getUser().getUserName());
+    rsvpResponse.setEmailAddress(savedParticipant.getUser().getEmailAddress());
+    rsvpResponse.setEventId(savedParticipant.getEvent().getId());
+    rsvpResponse.setEventName(savedParticipant.getEvent().getName());
+    rsvpResponse.setVenue(savedParticipant.getEvent().getVenue());
+    rsvpResponse.setDescription(savedParticipant.getEvent().getDescription());
+
     logger.info("Participant created with ID: " + savedParticipant.getId());
 
-    return savedParticipant;
+    return rsvpResponse;
   }
 
   /**
