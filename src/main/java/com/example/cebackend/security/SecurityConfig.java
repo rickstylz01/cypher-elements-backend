@@ -36,8 +36,6 @@ public class SecurityConfig {
       .antMatchers(HttpMethod.POST, "/api/events/").authenticated()
       .antMatchers(HttpMethod.PUT, "/api/events/**").authenticated()
       .antMatchers(HttpMethod.DELETE, "/api/events/**").authenticated()
-      // participant endpoints
-      .antMatchers("/api/participants/**").permitAll()
       .antMatchers("/h2-console/**").permitAll()
       .anyRequest().authenticated()
       .and()
