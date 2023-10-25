@@ -84,11 +84,11 @@ public class EventController {
   }
 
   @PutMapping("/{eventId}/")
-  public ResponseEntity<?> updateEvent(@PathVariable Long eventId, @RequestBody Event updatedEvent) {
+  public ResponseEntity<?> updateEvent(@PathVariable Long eventId, @RequestBody EventDTO updatedEventDTO) {
     try {
-      Event event = eventService.updateEvent(eventId, updatedEvent);
+      EventDTO eventDTO = eventService.updateEvent(eventId, updatedEventDTO);
       message.put("message", "success");
-      message.put("data", event);
+      message.put("data", eventDTO);
       return new ResponseEntity<>(message, HttpStatus.OK);
     } catch (IllegalArgumentException e) {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
