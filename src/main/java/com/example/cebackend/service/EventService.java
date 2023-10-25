@@ -25,7 +25,6 @@ public class EventService {
   private final UserRepository userRepository;
   private static final Logger logger = Logger.getLogger(EventService.class.getName());
 
-
   @Autowired
   public EventService(EventRepository eventRepository, ParticipantRepository participantRepository, UserRepository userRepository) {
     this.eventRepository = eventRepository;
@@ -222,6 +221,19 @@ public class EventService {
     Participant savedParticipant = participantRepository.save(participant);
 
     return createRSVPResponse(savedParticipant);
+  }
+
+  public void removeParticipantFromEvent(Long eventId, Long participantId) {
+    validateEventId(eventId);
+
+    Event event = eventRepository.findById(eventId)
+      .orElseThrow(() -> new InformationNotFoundException("Event with ID: " + eventId + ", not found"));
+
+    // remove participant from the event
+    event.getParticipants().removeIf(participant -> participant.getId().equals(participantId));
+
+    // Save the updated event back to the repository
+    eventRepository.save(event);
   }
 
   /**
