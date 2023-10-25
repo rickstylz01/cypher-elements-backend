@@ -114,4 +114,19 @@ public class EventController {
       return new ResponseEntity<>("Error deleteing event", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  @DeleteMapping("/{eventId}/participants/{participantId}/")
+  public ResponseEntity<?> removeParticipantFromEvent(@PathVariable Long eventId, @PathVariable Long participantId) {
+    try {
+      eventService.removeParticipantFromEvent(eventId, participantId);
+      message.put("message", "Participant with id: " + participantId + " removed from event with id: " + eventId);
+      return new ResponseEntity<>(message, HttpStatus.OK);
+    } catch (InformationNotFoundException e) {
+      message.put("message", e.getMessage());
+      return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    } catch (Exception e) {
+      message.put("message", "Error removing participant from event");
+      return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
