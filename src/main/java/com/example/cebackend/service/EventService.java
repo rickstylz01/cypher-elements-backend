@@ -2,7 +2,11 @@ package com.example.cebackend.service;
 
 import com.example.cebackend.exceptions.InformationNotFoundException;
 import com.example.cebackend.models.Event;
+import com.example.cebackend.models.Participant;
+import com.example.cebackend.models.User;
 import com.example.cebackend.repository.EventRepository;
+import com.example.cebackend.repository.ParticipantRepository;
+import com.example.cebackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +17,14 @@ import java.util.Optional;
 @Service
 public class EventService {
   private final EventRepository eventRepository;
+  private final ParticipantRepository participantRepository;
+  private final UserRepository userRepository;
 
   @Autowired
-  public EventService(EventRepository eventRepository) {
+  public EventService(EventRepository eventRepository, ParticipantRepository participantRepository, UserRepository userRepository) {
     this.eventRepository = eventRepository;
+    this.participantRepository = participantRepository;
+    this.userRepository = userRepository;
   }
 
   /**
@@ -112,6 +120,50 @@ public class EventService {
     }
 
     eventRepository.deleteById(eventId);
+  }
+
+  /**
+   * Retrieves a user by their unique identifier from the user repository
+   * @param userId The unique identifier of the user to be retrieved
+   * @return The User object associated with the provided ID
+   */
+  private User getUserById(Long userId) {
+    return userRepository.findById(userId)
+      .orElseThrow(() -> new InformationNotFoundException("User with ID: " + userId + ", not found"));
+  }
+
+  /**
+   * Handles RSVP for an event, creating a participant for the specified user and event.
+   *
+   * @param eventId The unique identifier of the event.
+   * @param userId  The unique identifier of the user who is RSVPing.
+   * @return The created Participant object after being saved in the participant repository.
+   */
+  public Participant rsvpToEvent(Long eventId, Long userId) {
+    if (eventId == null || eventId <= 0 || userId == null || userId <= 0) {
+      throw new IllegalArgumentException("Invalid evenId or userId");
+    }
+
+    Optional<Event> eventOptional = getEventById(eventId);
+
+    if (eventOptional.isPresent()) {
+      Event event = eventOptional.get();
+      Optional<User> userOptional = userRepository.findById(userId);
+      if (userOptional.isPresent()) {
+        User user = userOptional.get();
+
+        // Create a participant
+        Participant participant = new Participant();
+        participant.setUser(getUserById(userId));
+        participant.setEvent(event);
+
+        return participantRepository.save(participant);
+      } else {
+        throw new InformationNotFoundException("User not found with ID: " + userId);
+      }
+    } else {
+      throw new InformationNotFoundException("Event with ID: " + eventId + ", not found");
+    }
   }
 
 }
