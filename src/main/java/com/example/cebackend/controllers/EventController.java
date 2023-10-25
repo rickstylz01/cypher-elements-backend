@@ -62,7 +62,7 @@ public class EventController {
 
   @GetMapping("/")
   public ResponseEntity<?> getAllEvents() {
-    List<Event> events = eventService.getAllEvents();
+    List<EventDTO> events = eventService.getAllEvents();
     message.put("message", "success");
     message.put("data", events);
     return new ResponseEntity<>(message, HttpStatus.OK);
