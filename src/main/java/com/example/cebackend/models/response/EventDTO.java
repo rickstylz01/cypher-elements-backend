@@ -28,6 +28,7 @@ public class EventDTO {
     this.description = event.getDescription();
     this.participants = event.getParticipants().stream()
       .map(participant -> new RSVPResponse(
+        participant.getId(),
         participant.getUser().getUserName(),
         participant.getUser().getEmailAddress(),
         participant.getEvent().getId(),
