@@ -12,10 +12,12 @@ import com.example.cebackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Part;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -36,8 +38,50 @@ public class EventService {
    * Retrieves a list of all events from the event repository
    * @return A List of Event objects representing all events in the repository
    */
-  public List<Event> getAllEvents() {
-    return eventRepository.findAll();
+  public List<EventDTO> getAllEvents() {
+    List<Event> events = eventRepository.findAll();
+    return events.stream()
+      .map(event -> convertEventToEventDTO(event))
+      .collect(Collectors.toList());
+
+  }
+
+  private EventDTO convertEventToEventDTO(Event event) {
+    EventDTO eventDTO = new EventDTO();
+    eventDTO.setId(event.getId());
+    eventDTO.setName(event.getName());
+    eventDTO.setEventDate(event.getEventDate());
+    eventDTO.setVenue(event.getVenue());
+    eventDTO.setDescription(event.getDescription());
+
+    // Convert Participants to RSVPResponse objects
+    List<RSVPResponse> participants = event.getParticipants().stream()
+        .map(participant -> createRSVPResponse(participant))
+          .collect(Collectors.toList());
+
+    eventDTO.setParticipants(participants);
+    return eventDTO;
+  }
+
+  //  /**
+//   * Creates an RSVPResponse object based on participant details.
+//   * @param participant The Participant object from which to create the RSVPResponse
+//   * @return The created RSVPResponse object with user and event details
+//   */
+  private RSVPResponse createRSVPResponse(Participant participant) {
+    RSVPResponse rsvpResponse = new RSVPResponse();
+    User user = participant.getUser();
+    Event event = participant.getEvent();
+
+    rsvpResponse.setUserName(user.getUserName());
+    rsvpResponse.setEmailAddress(user.getEmailAddress());
+    rsvpResponse.setEventId(event.getId());
+    rsvpResponse.setEventName(event.getName());
+    rsvpResponse.setVenue(event.getVenue());
+    rsvpResponse.setDescription(event.getDescription());
+
+    logger.info("Participant created with ID: " + participant.getId());
+    return rsvpResponse;
   }
 
   /**
@@ -141,27 +185,6 @@ public class EventService {
   private User getUserById(Long userId) {
     return userRepository.findById(userId)
       .orElseThrow(() -> new InformationNotFoundException("User with ID: " + userId + ", not found"));
-  }
-
-//  /**
-//   * Creates an RSVPResponse object based on participant details.
-//   * @param participant The Participant object from which to create the RSVPResponse
-//   * @return The created RSVPResponse object with user and event details
-//   */
-  private RSVPResponse createRSVPResponse(Participant participant) {
-    RSVPResponse rsvpResponse = new RSVPResponse();
-    User user = participant.getUser();
-    Event event = participant.getEvent();
-
-    rsvpResponse.setUserName(user.getUserName());
-    rsvpResponse.setEmailAddress(user.getEmailAddress());
-    rsvpResponse.setEventId(event.getId());
-    rsvpResponse.setEventName(event.getName());
-    rsvpResponse.setVenue(event.getVenue());
-    rsvpResponse.setDescription(event.getDescription());
-
-    logger.info("Participant created with ID: " + participant.getId());
-    return rsvpResponse;
   }
 
   private Event convertEventDTOToEvent(EventDTO eventDTO) {
