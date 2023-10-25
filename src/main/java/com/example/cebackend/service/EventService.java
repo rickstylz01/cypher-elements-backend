@@ -4,6 +4,7 @@ import com.example.cebackend.exceptions.InformationNotFoundException;
 import com.example.cebackend.models.Event;
 import com.example.cebackend.models.Participant;
 import com.example.cebackend.models.User;
+import com.example.cebackend.models.response.EventDTO;
 import com.example.cebackend.models.response.RSVPResponse;
 import com.example.cebackend.repository.EventRepository;
 import com.example.cebackend.repository.ParticipantRepository;
@@ -44,8 +45,14 @@ public class EventService {
    * @param eventId The unique identifier of the even to be retrieved
    * @return An Optional containing the Event object if found, or an empty Optional if not found
    */
-  public Optional<Event> getEventById(Long eventId) {
-    return eventRepository.findById(eventId);
+  public Optional<EventDTO> getEventById(Long eventId) {
+    Optional<Event> eventOptional = eventRepository.findById(eventId);
+    if (eventOptional.isPresent()) {
+      Event event = eventOptional.get();
+      return Optional.of(new EventDTO(event));
+    } else {
+      throw new InformationNotFoundException("Event with ID: " + eventId + ", not found");
+    }
   }
 
   /**
@@ -136,11 +143,11 @@ public class EventService {
       .orElseThrow(() -> new InformationNotFoundException("User with ID: " + userId + ", not found"));
   }
 
-  /**
-   * Creates an RSVPResponse object based on participant details.
-   * @param participant The Participant object from which to create the RSVPResponse
-   * @return The created RSVPResponse object with user and event details
-   */
+//  /**
+//   * Creates an RSVPResponse object based on participant details.
+//   * @param participant The Participant object from which to create the RSVPResponse
+//   * @return The created RSVPResponse object with user and event details
+//   */
   private RSVPResponse createRSVPResponse(Participant participant) {
     RSVPResponse rsvpResponse = new RSVPResponse();
     User user = participant.getUser();
@@ -157,6 +164,17 @@ public class EventService {
     return rsvpResponse;
   }
 
+  private Event convertEventDTOToEvent(EventDTO eventDTO) {
+    Event event = new Event();
+    event.setId(eventDTO.getId());
+    event.setName(eventDTO.getName());
+    event.setEventDate(eventDTO.getEventDate());
+    event.setVenue(eventDTO.getVenue());
+    event.setDescription(eventDTO.getDescription());
+    // You may need to convert other fields as well
+    return event;
+  }
+
   /**
    * Handles RSVP for an event, creating a participant for the specified user and event.
    *
@@ -169,10 +187,14 @@ public class EventService {
       throw new IllegalArgumentException("Invalid evenId or userId");
     }
 
-    Optional<Event> eventOptional = getEventById(eventId);
+    Optional<EventDTO> eventOptional = getEventById(eventId);
 
     if (eventOptional.isPresent()) {
-      Event event = eventOptional.get();
+      EventDTO eventDTO = eventOptional.get();
+
+      // Convert EventDTO to Event entity
+      Event event = convertEventDTOToEvent(eventDTO);
+
       Optional<User> userOptional = userRepository.findById(userId);
 
       if (userOptional.isPresent()) {
@@ -180,7 +202,7 @@ public class EventService {
 
         // Create a participant
         Participant participant = new Participant();
-        participant.setUser(getUserById(userId));
+        participant.setUser(user);
         participant.setEvent(event);
 
         // Save participant to the repository
