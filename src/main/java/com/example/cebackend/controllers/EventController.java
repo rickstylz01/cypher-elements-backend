@@ -3,7 +3,6 @@ package com.example.cebackend.controllers;
 import com.example.cebackend.exceptions.InformationExistException;
 import com.example.cebackend.exceptions.InformationNotFoundException;
 import com.example.cebackend.models.Event;
-import com.example.cebackend.models.Participant;
 import com.example.cebackend.models.response.EventDTO;
 import com.example.cebackend.models.response.RSVPResponse;
 import com.example.cebackend.service.EventService;
@@ -15,11 +14,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(path = "/api/events")
 public class EventController {
   private final EventService eventService;
+
+  private static final Logger logger = Logger.getLogger(EventController.class.getName());
+
   static HashMap<String, Object> message = new HashMap<>();
 
   @Autowired
@@ -55,6 +59,7 @@ public class EventController {
       message.put("message", e.getMessage());
       return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     } catch (Exception e) {
+      logger.log(Level.SEVERE, "Error processing RSVP", e);
       message.put("message", "Error processing RSVP");
       return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

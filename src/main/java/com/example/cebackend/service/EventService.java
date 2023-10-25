@@ -12,7 +12,6 @@ import com.example.cebackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.Part;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -151,7 +150,7 @@ public class EventService {
     return eventRepository.save(event);
   }
 
-
+//todo: doclist
   public EventDTO updateEvent(Long eventId, EventDTO updatedEventDTO) {
     validateEventId(eventId);
 
@@ -197,12 +196,24 @@ public class EventService {
    */
   public RSVPResponse rsvpToEvent(Long eventId, Long userId) {
     validateEventId(eventId);
-    User user = getUserById(eventId);
+
     EventDTO eventDTO = getEventById(eventId)
       .orElseThrow(() -> new InformationNotFoundException("Event with ID: " + eventId + ", not found"));
 
     Event event = convertEventDTOToEvent(eventDTO);
 
+    // Retrieve user from the database
+    User user = getUserById(userId);
+
+    // Check if the user is already a participant in the event
+    boolean isAlreadyParticipant = event.getParticipants().stream()
+      .anyMatch(participant -> participant.getUser().getId().equals(userId));
+
+    if (isAlreadyParticipant) {
+      throw new IllegalArgumentException("User with ID: " + userId + " is already a participant in this event");
+    }
+
+    // Create a new participant
     Participant participant = new Participant();
     participant.setUser(user);
     participant.setEvent(event);
