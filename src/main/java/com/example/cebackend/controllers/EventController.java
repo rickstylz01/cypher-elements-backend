@@ -4,6 +4,7 @@ import com.example.cebackend.exceptions.InformationExistException;
 import com.example.cebackend.exceptions.InformationNotFoundException;
 import com.example.cebackend.models.Event;
 import com.example.cebackend.models.Participant;
+import com.example.cebackend.models.response.EventDTO;
 import com.example.cebackend.models.response.RSVPResponse;
 import com.example.cebackend.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,14 +72,13 @@ public class EventController {
   @GetMapping("/{eventId}/")
   public ResponseEntity<HashMap<String, Object>> getEventById(@PathVariable Long eventId) {
     HashMap<String, Object> response = new HashMap<>();
-    Optional<Event> eventOptional = eventService.getEventById(eventId);
-    if (eventOptional.isPresent()) {
-      Event event = eventOptional.get();
+    try {
+      Optional<EventDTO> eventDTO = eventService.getEventById(eventId);
       response.put("message", "success");
-      response.put("data", event);
+      response.put("data", eventDTO);
       return new ResponseEntity<>(response, HttpStatus.OK);
-    } else {
-      response.put("message", "Event not found");
+    } catch (InformationNotFoundException e) {
+      response.put("message", e.getMessage());
       return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
   }
