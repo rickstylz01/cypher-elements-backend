@@ -70,9 +70,9 @@ public class EventServiceTest {
     when(eventRepository.findById(3L)).thenReturn(Optional.empty());
 
     // Act
-    Optional<Event> foundEvent1 = eventService.getEventById(1L);
-    Optional<Event> foundEvent2 = eventService.getEventById(2L);
-    Optional<Event> nonExistentEvent = eventService.getEventById(3L);
+    Optional<EventDTO> foundEvent1 = eventService.getEventById(1L);
+    Optional<EventDTO> foundEvent2 = eventService.getEventById(2L);
+    Optional<EventDTO> nonExistentEvent = eventService.getEventById(3L);
 
     // Assert
     assertTrue(foundEvent1.isPresent());
@@ -138,25 +138,25 @@ public class EventServiceTest {
     // Arrange
     Long eventId = 1L;
 
-    Event existingEvent = new Event();
-    existingEvent.setId(eventId);
-    existingEvent.setName("Old Event Name");
+    EventDTO existingEventDTO = new EventDTO();
+    existingEventDTO.setId(eventId);
+    existingEventDTO.setName("Old Event Name");
 
-    Event updatedEvent = new Event();
-    updatedEvent.setId(eventId);
-    updatedEvent.setName("New Event Name");
+    EventDTO updatedEventDTO = new EventDTO();
+    updatedEventDTO.setId(eventId);
+    updatedEventDTO.setName("New Event Name");
 
     // Mock eventRepository.findById(id) and eventRepository.save(event)
-    when(eventRepository.findById(eventId)).thenReturn(Optional.of(existingEvent));
-    when(eventRepository.save(existingEvent)).thenReturn(updatedEvent);
+    when(eventRepository.findById(eventId)).thenReturn(Optional.of(eventService.convertEventDTOToEvent(existingEventDTO)));
+    when(eventRepository.save(eventService.convertEventDTOToEvent(existingEventDTO))).thenReturn(eventService.convertEventDTOToEvent(updatedEventDTO));
 
     // Act
-    Event result = eventService.updateEvent(eventId, updatedEvent);
+    EventDTO result = eventService.updateEvent(eventId, updatedEventDTO);
 
     // Assert
     assertNotNull(result);
     assertEquals("New Event Name", result.getName());
-    verify(eventRepository).save(existingEvent);
+    verify(eventRepository).save(eventService.convertEventDTOToEvent(existingEventDTO));
   }
 
   @Test
