@@ -149,7 +149,12 @@ public class EventService {
     return eventRepository.save(event);
   }
 
-//todo: doclist
+  /**
+   * Updates an existing event with the provided event ID using details from the updated EventDTO
+   * @param eventId The unique identifier of the event to be updated
+   * @param updatedEventDTO The EventDTO containing updated information to be applied to the existing event.
+   * @return
+   */
   public EventDTO updateEvent(Long eventId, EventDTO updatedEventDTO) {
     validateEventId(eventId);
 
@@ -223,6 +228,11 @@ public class EventService {
     return createRSVPResponse(savedParticipant);
   }
 
+  /**
+   * Removes a participant from an event based on their unique participant ID
+   * @param eventId The unique identifier of the event from which the participant should be removed.
+   * @param participantId The unique identifier of the participant to be removed from the event.
+   */
   public void removeParticipantFromEvent(Long eventId, Long participantId) {
     validateEventId(eventId);
 
