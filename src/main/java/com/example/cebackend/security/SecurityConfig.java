@@ -29,13 +29,14 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.authorizeRequests()
+      // user endpoints
       .antMatchers("/auth/users/login/", "/auth/users/register/").permitAll()
+      // event endpoints
       .antMatchers(HttpMethod.GET,"/api/events/", "/api/events/**").permitAll()
       .antMatchers(HttpMethod.POST, "/api/events/").authenticated()
       .antMatchers(HttpMethod.PUT, "/api/events/**").authenticated()
       .antMatchers(HttpMethod.DELETE, "/api/events/**").authenticated()
       .antMatchers("/h2-console/**").permitAll()
-      .antMatchers("/auth/users/hello/").permitAll()
       .anyRequest().authenticated()
       .and()
       .sessionManagement()
@@ -44,8 +45,7 @@ public class SecurityConfig {
       .csrf().disable()
       .headers().frameOptions().disable(); // Disable frame options for h2-console.
       http.cors(); // Enable CORS
-    // Add the JwtRequestFilter before the default UsernamePasswordAuthenticationFilter.
-    http.addFilterBefore(authJwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(authJwtRequestFilter(), UsernamePasswordAuthenticationFilter.class); // Add the JwtRequestFilter before the default UsernamePasswordAuthenticationFilter.
     return http.build();
   }
 

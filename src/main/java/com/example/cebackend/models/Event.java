@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,4 +33,8 @@ public class Event {
       orphanRemoval = true
     )
     private List<Participant> participants;
+
+    public Event() {
+        this.participants = new ArrayList<>();
+    }
 }
