@@ -153,7 +153,7 @@ public class EventService {
    * Updates an existing event with the provided event ID using details from the updated EventDTO
    * @param eventId The unique identifier of the event to be updated
    * @param updatedEventDTO The EventDTO containing updated information to be applied to the existing event.
-   * @return
+   * @return The updated EventDTO object representing the modified event after being saved back in the event repository.
    */
   public EventDTO updateEvent(Long eventId, EventDTO updatedEventDTO) {
     validateEventId(eventId);

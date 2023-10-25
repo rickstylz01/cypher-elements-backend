@@ -62,8 +62,6 @@ public class EventServiceTest {
     event2.setId(2L);
     event2.setName("Event Two");
 
-    List<Event> events = List.of(event1, event2);
-
     // Mock the behavior of eventRepository.findAll()
     when(eventRepository.findById(1L)).thenReturn(Optional.of(event1));
     when(eventRepository.findById(2L)).thenReturn(Optional.of(event2));
