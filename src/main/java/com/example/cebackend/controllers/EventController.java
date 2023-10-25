@@ -1,7 +1,10 @@
 package com.example.cebackend.controllers;
 
 import com.example.cebackend.exceptions.InformationExistException;
+import com.example.cebackend.exceptions.InformationNotFoundException;
 import com.example.cebackend.models.Event;
+import com.example.cebackend.models.Participant;
+import com.example.cebackend.models.response.RSVPResponse;
 import com.example.cebackend.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +40,25 @@ public class EventController {
 
   }
 
+  @PostMapping("/{eventId}/rsvp/{userId}/")
+  public ResponseEntity<?> rsvpToEvent(@PathVariable Long eventId, @PathVariable Long userId) {
+    try {
+      RSVPResponse participant = eventService.rsvpToEvent(eventId, userId);
+      message.put("message", "success, RSVP confirmed");
+      message.put("data", participant);
+      return new ResponseEntity<>(message, HttpStatus.CREATED);
+    } catch (InformationNotFoundException e) {
+      message.put("message", e.getMessage());
+      return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    } catch (IllegalArgumentException e) {
+      message.put("message", e.getMessage());
+      return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    } catch (Exception e) {
+      message.put("message", "Error processing RSVP");
+      return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   @GetMapping("/")
   public ResponseEntity<?> getAllEvents() {
     List<Event> events = eventService.getAllEvents();
@@ -45,6 +67,7 @@ public class EventController {
     return new ResponseEntity<>(message, HttpStatus.OK);
   }
 
+  // Get an event by it's ID
   @GetMapping("/{eventId}/")
   public ResponseEntity<HashMap<String, Object>> getEventById(@PathVariable Long eventId) {
     HashMap<String, Object> response = new HashMap<>();
