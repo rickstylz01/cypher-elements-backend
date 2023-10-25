@@ -4,6 +4,7 @@ import com.example.cebackend.exceptions.InformationNotFoundException;
 import com.example.cebackend.models.Event;
 import com.example.cebackend.models.Participant;
 import com.example.cebackend.models.User;
+import com.example.cebackend.models.response.RSVPResponse;
 import com.example.cebackend.repository.EventRepository;
 import com.example.cebackend.repository.ParticipantRepository;
 import com.example.cebackend.repository.UserRepository;
@@ -13,12 +14,15 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class EventService {
   private final EventRepository eventRepository;
   private final ParticipantRepository participantRepository;
   private final UserRepository userRepository;
+  private static final Logger logger = Logger.getLogger(EventService.class.getName());
+
 
   @Autowired
   public EventService(EventRepository eventRepository, ParticipantRepository participantRepository, UserRepository userRepository) {
@@ -133,13 +137,34 @@ public class EventService {
   }
 
   /**
+   * Creates an RSVPResponse object based on participant details.
+   * @param participant The Participant object from which to create the RSVPResponse
+   * @return The created RSVPResponse object with user and event details
+   */
+  private RSVPResponse createRSVPResponse(Participant participant) {
+    RSVPResponse rsvpResponse = new RSVPResponse();
+    User user = participant.getUser();
+    Event event = participant.getEvent();
+
+    rsvpResponse.setUserName(user.getUserName());
+    rsvpResponse.setEmailAddress(user.getEmailAddress());
+    rsvpResponse.setEventId(event.getId());
+    rsvpResponse.setEventName(event.getName());
+    rsvpResponse.setVenue(event.getVenue());
+    rsvpResponse.setDescription(event.getDescription());
+
+    logger.info("Participant created with ID: " + participant.getId());
+    return rsvpResponse;
+  }
+
+  /**
    * Handles RSVP for an event, creating a participant for the specified user and event.
    *
    * @param eventId The unique identifier of the event.
    * @param userId  The unique identifier of the user who is RSVPing.
    * @return The created Participant object after being saved in the participant repository.
    */
-  public Participant rsvpToEvent(Long eventId, Long userId) {
+  public RSVPResponse rsvpToEvent(Long eventId, Long userId) {
     if (eventId == null || eventId <= 0 || userId == null || userId <= 0) {
       throw new IllegalArgumentException("Invalid evenId or userId");
     }
@@ -149,6 +174,7 @@ public class EventService {
     if (eventOptional.isPresent()) {
       Event event = eventOptional.get();
       Optional<User> userOptional = userRepository.findById(userId);
+
       if (userOptional.isPresent()) {
         User user = userOptional.get();
 
@@ -157,7 +183,10 @@ public class EventService {
         participant.setUser(getUserById(userId));
         participant.setEvent(event);
 
-        return participantRepository.save(participant);
+        // Save participant to the repository
+        Participant savedParticipant = participantRepository.save(participant);
+
+        return createRSVPResponse(savedParticipant);
       } else {
         throw new InformationNotFoundException("User not found with ID: " + userId);
       }
