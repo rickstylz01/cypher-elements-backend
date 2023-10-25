@@ -1,6 +1,7 @@
 package com.example.cebackend.service;
 
 import com.example.cebackend.models.Event;
+import com.example.cebackend.models.response.EventDTO;
 import com.example.cebackend.repository.EventRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +42,7 @@ public class EventServiceTest {
     when(eventRepository.findAll()).thenReturn(events);
 
     // Act
-    List<Event> returnedEvents = eventService.getAllEvents();
+    List<EventDTO> returnedEvents = eventService.getAllEvents();
 
     // Assert
     assertEquals(2, returnedEvents.size());
