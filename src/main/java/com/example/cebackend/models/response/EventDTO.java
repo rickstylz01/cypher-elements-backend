@@ -30,12 +30,7 @@ public class EventDTO {
       .map(participant -> new RSVPResponse(
         participant.getId(),
         participant.getUser().getUserName(),
-        participant.getUser().getEmailAddress(),
-        participant.getEvent().getId(),
-        participant.getEvent().getName(),
-        participant.getEvent().getVenue(),
-        participant.getEvent().getDescription(),
-        participant.getUser().getParticipants()))
+        participant.getUser().getEmailAddress()))
       .collect(Collectors.toList());
   }
 }

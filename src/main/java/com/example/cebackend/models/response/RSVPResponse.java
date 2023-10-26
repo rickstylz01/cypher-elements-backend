@@ -14,9 +14,4 @@ public class RSVPResponse {
   private Long participantId;
   private String userName;
   private String emailAddress;
-  private Long eventId;
-  private String eventName;
-  private String venue;
-  private String description;
-  private List<Participant> participantList;
 }
