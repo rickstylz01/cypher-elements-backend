@@ -94,6 +94,7 @@ public class EventService {
 
   /**
    * Converts an EventDTO object to its corresponding Event representation
+   *
    * @param eventDTO The EventDTO object to be converted to Event
    * @return An Event object representing the provided EventDTO
    */
@@ -110,6 +111,7 @@ public class EventService {
 
   /**
    * Converts an Event object to its corresponding EventDTO representation
+   *
    * @param event The Event object to be converted to EventDTO
    * @return An EventDTO object representing the provided Event with participants converted to RSVPResponse objects.
    */
@@ -155,7 +157,8 @@ public class EventService {
 
   /**
    * Updates an existing event with the provided event ID using details from the updated EventDTO
-   * @param eventId The unique identifier of the event to be updated
+   *
+   * @param eventId         The unique identifier of the event to be updated
    * @param updatedEventDTO The EventDTO containing updated information to be applied to the existing event.
    * @return The updated EventDTO object representing the modified event after being saved back in the event repository.
    */
@@ -226,11 +229,6 @@ public class EventService {
     participant.setUser(user);
     participant.setEvent(event);
 
-    // Save participant to the repository
-    Participant savedParticipant = participantRepository.save(participant);
-
-//    List<Participant> participantList = participant.getUser().getParticipants();
-
     EventResponseDto responseDto = new EventResponseDto();
     responseDto.setEventId(event.getId());
     responseDto.setEmailAddress(user.getEmailAddress());
@@ -258,7 +256,8 @@ public class EventService {
 
   /**
    * Removes a participant from an event based on their unique participant ID
-   * @param eventId The unique identifier of the event from which the participant should be removed.
+   *
+   * @param eventId       The unique identifier of the event from which the participant should be removed.
    * @param participantId The unique identifier of the participant to be removed from the event.
    */
   public void removeParticipantFromEvent(Long eventId, Long participantId) {
