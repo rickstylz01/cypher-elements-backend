@@ -5,6 +5,8 @@ import com.example.cebackend.models.Event;
 import com.example.cebackend.models.Participant;
 import com.example.cebackend.models.User;
 import com.example.cebackend.models.response.EventDTO;
+import com.example.cebackend.models.response.EventParticipantDto;
+import com.example.cebackend.models.response.EventResponseDto;
 import com.example.cebackend.models.response.RSVPResponse;
 import com.example.cebackend.repository.EventRepository;
 import com.example.cebackend.repository.ParticipantRepository;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -199,7 +202,7 @@ public class EventService {
    * @param userId  The unique identifier of the user who is RSVPing.
    * @return The created Participant object after being saved in the participant repository.
    */
-  public RSVPResponse rsvpToEvent(Long eventId, Long userId) {
+  public EventResponseDto rsvpToEvent(Long eventId, Long userId) {
     validateEventId(eventId);
 
     EventDTO eventDTO = getEventById(eventId)
@@ -225,15 +228,32 @@ public class EventService {
 
     // Save participant to the repository
     Participant savedParticipant = participantRepository.save(participant);
-//    RSVPResponse rsvpResponse = new RSVPResponse();
-//    rsvpResponse.setParticipantId(savedParticipant.getId());
-//    rsvpResponse.setEventName(event.getName());
-//    rsvpResponse.setEventId(event.getId());
-//    rsvpResponse.setVenue(event.getVenue());
-//    rsvpResponse.setDescription(event.getDescription());
-//    rsvpResponse.setUserName(user.getUserName());
-//    rsvpResponse.setEmailAddress(user.getEmailAddress());
-    return createRSVPResponse(savedParticipant);
+
+//    List<Participant> participantList = participant.getUser().getParticipants();
+
+    EventResponseDto responseDto = new EventResponseDto();
+    responseDto.setEventId(event.getId());
+    responseDto.setEmailAddress(user.getEmailAddress());
+    responseDto.setEventName(event.getName());
+    responseDto.setVenue(event.getVenue());
+    responseDto.setDescription(event.getDescription());
+
+    List<Participant> participants = participant.getUser().getParticipants();
+
+    if (responseDto.getEventParticipantList() == null) {
+      responseDto.setEventParticipantList(new ArrayList<>());
+    }
+
+    for (Participant p : participants) {
+      EventParticipantDto eventParticipantDto = new EventParticipantDto(
+        p.getId(),
+        p.getUser().getUserName(),
+        responseDto.getEmailAddress()
+      );
+      responseDto.getEventParticipantList().add(eventParticipantDto);
+    }
+
+    return responseDto;
   }
 
   /**
@@ -281,4 +301,3 @@ public class EventService {
     eventRepository.deleteById(eventId);
   }
 }
-
