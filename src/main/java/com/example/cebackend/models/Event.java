@@ -1,6 +1,8 @@
 package com.example.cebackend.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -10,10 +12,13 @@ import java.util.List;
 @Entity
 @Table
 @Data
+@AllArgsConstructor
 public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    //TODO: add image property
 
     @Column
     private String name;
