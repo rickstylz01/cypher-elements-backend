@@ -1,17 +1,14 @@
 package com.example.cebackend.models.response;
 
-import com.example.cebackend.models.Participant;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.util.List;
-
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class RSVPResponse {
-  private Long participantId;
+  private Long userId;
   private String userName;
   private String emailAddress;
 }
