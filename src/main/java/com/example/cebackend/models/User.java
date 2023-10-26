@@ -1,5 +1,6 @@
 package com.example.cebackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -24,6 +25,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Participant> participants;
 }
