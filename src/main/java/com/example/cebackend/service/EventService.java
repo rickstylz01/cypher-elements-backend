@@ -83,6 +83,7 @@ public class EventService {
     rsvpResponse.setEventName(event.getName());
     rsvpResponse.setVenue(event.getVenue());
     rsvpResponse.setDescription(event.getDescription());
+    rsvpResponse.setParticipantList(participant.getUser().getParticipants());
 
     logger.info("Participant created with ID: " + participant.getId());
     return rsvpResponse;
@@ -224,7 +225,14 @@ public class EventService {
 
     // Save participant to the repository
     Participant savedParticipant = participantRepository.save(participant);
-
+//    RSVPResponse rsvpResponse = new RSVPResponse();
+//    rsvpResponse.setParticipantId(savedParticipant.getId());
+//    rsvpResponse.setEventName(event.getName());
+//    rsvpResponse.setEventId(event.getId());
+//    rsvpResponse.setVenue(event.getVenue());
+//    rsvpResponse.setDescription(event.getDescription());
+//    rsvpResponse.setUserName(user.getUserName());
+//    rsvpResponse.setEmailAddress(user.getEmailAddress());
     return createRSVPResponse(savedParticipant);
   }
 

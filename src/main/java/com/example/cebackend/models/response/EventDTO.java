@@ -34,7 +34,8 @@ public class EventDTO {
         participant.getEvent().getId(),
         participant.getEvent().getName(),
         participant.getEvent().getVenue(),
-        participant.getEvent().getDescription()))
+        participant.getEvent().getDescription(),
+        participant.getUser().getParticipants()))
       .collect(Collectors.toList());
   }
 }
