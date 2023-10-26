@@ -7,7 +7,6 @@ import com.example.cebackend.repository.EventRepository;
 import com.example.cebackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +17,11 @@ import java.util.List;
 @Component
 public class UserDataLoader implements CommandLineRunner {
   private final UserRepository userRepository;
-
   private final EventRepository eventRepository;
-
   private final PasswordEncoder passwordEncoder;
 
   @Autowired
-  public UserDataLoader(UserRepository userRepository, EventRepository eventRepository, @Lazy PasswordEncoder passwordEncoder) {
+  public UserDataLoader(UserRepository userRepository, EventRepository eventRepository, PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
     this.eventRepository = eventRepository;
     this.passwordEncoder = passwordEncoder;
@@ -55,13 +52,15 @@ public class UserDataLoader implements CommandLineRunner {
       event1.setEventDate(eventDate);
       event1.setVenue("Sox Park");
       event1.setDescription("Baseball Game!");
+      eventRepository.save(event1); // Save the event first
 
       Event event2 = new Event();
       event2.setName("Bulls Game");
       LocalDate eventDate2 = LocalDate.of(2023, 12, 13);
       event2.setEventDate(eventDate2);
       event2.setVenue("United Center");
-      event2.setDescription("BasketBall Game!");
+      event2.setDescription("Basketball Game!");
+      eventRepository.save(event2); // Save the event first
 
       Event event3 = new Event();
       event3.setName("Budos Band");
@@ -69,23 +68,24 @@ public class UserDataLoader implements CommandLineRunner {
       event3.setEventDate(eventDate3);
       event3.setVenue("Salt Factory");
       event3.setDescription("Music Concert!");
+      eventRepository.save(event3); // Save the event first
 
-      // participants
+      // Participants
       List<Participant> participants = new ArrayList<>();
 
       Participant participant1 = new Participant();
       participant1.setUser(user1);
+      participant1.setEvent(event1); // Set the event for participant1
       participants.add(participant1);
 
       Participant participant2 = new Participant();
-      participant1.setUser(user2);
+      participant2.setUser(user2);
+      participant2.setEvent(event1); // Set the event for participant2
       participants.add(participant2);
 
-      event1.setParticipants(participants);
+      event1.getParticipants().addAll(participants);
 
-      eventRepository.save(event1);
-      eventRepository.save(event2);
-      eventRepository.save(event3);
+      eventRepository.save(event1); // Save the event after adding participants
     }
   }
 }
