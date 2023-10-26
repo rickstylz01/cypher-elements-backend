@@ -78,7 +78,7 @@ public class EventController {
   public ResponseEntity<HashMap<String, Object>> getEventById(@PathVariable Long eventId) {
     HashMap<String, Object> response = new HashMap<>();
     try {
-      Optional<EventDTO> eventDTO = eventService.getEventById(eventId);
+      Optional<Event> eventDTO = eventService.getEventById(eventId);
       response.put("message", "success");
       response.put("data", eventDTO);
       return new ResponseEntity<>(response, HttpStatus.OK);
