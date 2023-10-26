@@ -1,5 +1,6 @@
 package com.example.cebackend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ public class Participant {
   @JoinColumn(name = "user_id")
   private User user;
 
+  @JsonIgnore
   @ManyToOne
   @JoinColumn(name = "event_id")
   private Event event;
