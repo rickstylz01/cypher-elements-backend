@@ -61,6 +61,16 @@ public class UserService {
     }
   }
 
+  /**
+   * Extracts user information from context holder
+   * @return Current logged in User object
+   */
+  public User getCurrentLoggedInUser(){
+    MyUserDetails userDetails = (MyUserDetails) SecurityContextHolder //After jwt is generated, Security Context Holder is created to hold the user's state
+      .getContext().getAuthentication().getPrincipal(); // the entire User object, with authentication details
+    return userDetails.getUser();
+  }
+
   public User findByUserEmailAddress(String emailAddress) {
     return userRepository.findUserByEmailAddress(emailAddress);
   }
