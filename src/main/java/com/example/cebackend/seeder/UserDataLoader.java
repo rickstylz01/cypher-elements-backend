@@ -47,27 +47,27 @@ public class UserDataLoader implements CommandLineRunner {
       userRepository.save(user2);
 
       Event event1 = new Event();
-      event1.setName("Sox Game");
+      event1.setName("Music Concert");
       LocalDate eventDate = LocalDate.of(2023, 11, 13);
       event1.setEventDate(eventDate);
-      event1.setVenue("Sox Park");
-      event1.setDescription("Baseball Game!");
+      event1.setVenue("Grant Park");
+      event1.setDescription("Music Concert at Grant Park!");
       eventRepository.save(event1); // Save the event first
 
       Event event2 = new Event();
-      event2.setName("Bulls Game");
+      event2.setName("Art Show");
       LocalDate eventDate2 = LocalDate.of(2023, 12, 13);
       event2.setEventDate(eventDate2);
       event2.setVenue("United Center");
-      event2.setDescription("Basketball Game!");
+      event2.setDescription("Come to the music concert at United Center!");
       eventRepository.save(event2); // Save the event first
 
       Event event3 = new Event();
-      event3.setName("Budos Band");
+      event3.setName("Dance Event");
       LocalDate eventDate3 = LocalDate.of(2024, 2, 3);
       event3.setEventDate(eventDate3);
       event3.setVenue("Salt Factory");
-      event3.setDescription("Music Concert!");
+      event3.setDescription("Dance event with a live band!");
       eventRepository.save(event3); // Save the event first
 
       // Participants
