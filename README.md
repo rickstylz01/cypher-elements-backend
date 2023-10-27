@@ -1,7 +1,7 @@
-# Event Management Backend
+# Cypher Events | Event Management Backend
 
 ## Project Description
-The Event Management Backend is a robust and secure API developed using Spring Boot. It offers a comprehensive solution for managing events and attendees. Users can register, log in, create events, manage participants, and perform various operations on events and attendees. The API ensures security through JSON Web Tokens (JWT) for authentication and authorization.
+The Cypher Events | Event Management Backend is a robust and secure API developed using Spring Boot. It offers a comprehensive solution for managing events and attendees. Users can register, log in, create events, manage participants, and perform various operations on events and attendees. The API ensures security through JSON Web Tokens (JWT) for authentication and authorization.
 
 Whether you're organizing conferences, workshops, or social gatherings, the Event Management Backend simplifies the process of managing events and attendees, allowing you to focus on creating memorable experiences.
 
@@ -29,7 +29,7 @@ Whether you're organizing conferences, workshops, or social gatherings, the Even
     - View participants of specific events.
 
 ## Project Approach
-The Event Management Backend project follows a systematic and user-centric approach to deliver a seamless event management experience. Key components of my approach include:
+The **Cypher Events Management Backend** project follows a systematic and user-centric approach to deliver a seamless event management experience. Key components of my approach include:
 
 ### User-Centric Design
 - Detailed user stories were crafted to capture essential user interactions.
