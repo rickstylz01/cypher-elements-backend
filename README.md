@@ -50,18 +50,6 @@ The Event Management Backend project follows a systematic and user-centric appro
 - Requests are routed through controllers, processed by services, and interact with the database through repositories.
 
 ## REST API Endpoints
-- **User Management:**
-    - `POST /auth/users/register/`: Registers a new user with user data.
-    - `POST /auth/users/login/`: Logs a user in.
-
-- **Event Management:**
-    - `POST /api/events/`: Creates a new event.
-    - `GET /api/events/`: Gets all events.
-    - `GET /api/events/{eventId}/`: Gets event details by ID.
-    - `PUT /api/events/{eventId}/`: Updates an event by ID.
-    - `DELETE /api/events/{eventId}/`: Deletes an event by ID.
-    - `POST /api/events/{eventId}/participants/{participantId}/`: Adds a participant to an event.
-    - `DELETE /api/events/{eventId}/participants/{participantId}/`: Removes a participant from an event.
 
 | **Endpoint**                                            | **Description**                                  |
 |---------------------------------------------------------|--------------------------------------------------|
