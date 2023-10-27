@@ -49,7 +49,8 @@ public class UserController {
     Optional<String> jwtToken = userService.loginUser(loginRequest);
     if(jwtToken.isPresent()){
       logger.info("Authentication is good for user " + loginRequest.getEmailAddress());
-      return ResponseEntity.ok(new LoginResponse(jwtToken.get()));
+      User loggedInUser = userService.getCurrentLoggedInUser();
+      return ResponseEntity.ok(new LoginResponse(jwtToken.get(), loggedInUser));
     }
     else{
       logger.warning("Authentication failed for user " + loginRequest.getEmailAddress());
