@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class RSVPResponse {
+public class EventParticipantDto {
   private Long userId;
   private String userName;
   private String emailAddress;

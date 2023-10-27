@@ -2,9 +2,9 @@ package com.example.cebackend.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,8 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //TODO: add image property
+    @Column
+    private String imageUrl;
 
     @Column
     private String name;
@@ -28,6 +29,9 @@ public class Event {
 
     @Column
     private String venue;
+
+    @Column
+    private BigDecimal price;
 
     @Column
     private String description;

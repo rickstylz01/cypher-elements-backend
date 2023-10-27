@@ -5,6 +5,8 @@ import com.example.cebackend.models.Event;
 import com.example.cebackend.models.Participant;
 import com.example.cebackend.models.User;
 import com.example.cebackend.models.response.EventDTO;
+import com.example.cebackend.models.response.EventParticipantDto;
+import com.example.cebackend.models.response.EventResponseDto;
 import com.example.cebackend.models.response.RSVPResponse;
 import com.example.cebackend.repository.EventRepository;
 import com.example.cebackend.repository.ParticipantRepository;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -75,15 +78,9 @@ public class EventService {
   private RSVPResponse createRSVPResponse(Participant participant) {
     RSVPResponse rsvpResponse = new RSVPResponse();
     User user = participant.getUser();
-    Event event = participant.getEvent();
 
     rsvpResponse.setUserName(user.getUserName());
     rsvpResponse.setEmailAddress(user.getEmailAddress());
-    rsvpResponse.setEventId(event.getId());
-    rsvpResponse.setEventName(event.getName());
-    rsvpResponse.setVenue(event.getVenue());
-    rsvpResponse.setDescription(event.getDescription());
-    rsvpResponse.setParticipantList(participant.getUser().getParticipants());
 
     logger.info("Participant created with ID: " + participant.getId());
     return rsvpResponse;
@@ -91,6 +88,7 @@ public class EventService {
 
   /**
    * Converts an EventDTO object to its corresponding Event representation
+   *
    * @param eventDTO The EventDTO object to be converted to Event
    * @return An Event object representing the provided EventDTO
    */
@@ -107,6 +105,7 @@ public class EventService {
 
   /**
    * Converts an Event object to its corresponding EventDTO representation
+   *
    * @param event The Event object to be converted to EventDTO
    * @return An EventDTO object representing the provided Event with participants converted to RSVPResponse objects.
    */
@@ -126,6 +125,35 @@ public class EventService {
     eventDTO.setParticipants(participants);
     return eventDTO;
   }
+
+
+  private EventResponseDto createEventResponseDto(Event event, User user) {
+    EventResponseDto responseDto = new EventResponseDto();
+    responseDto.setEventId(event.getId());
+    responseDto.setEmailAddress(user.getEmailAddress());
+    responseDto.setEventName(event.getName());
+    responseDto.setVenue(event.getVenue());
+    responseDto.setDescription(event.getDescription());
+
+    List<EventParticipantDto> eventParticipantList = event.getParticipants().stream()
+      .map(participant -> createEventParticipantDto(participant))
+      .collect(Collectors.toList());
+
+    responseDto.setEventParticipantList(eventParticipantList);
+    return responseDto;
+  }
+
+  private EventParticipantDto createEventParticipantDto(Participant participant) {
+    return new EventParticipantDto(
+      participant.getUser().getId(),
+      participant.getUser().getUserName(),
+      participant.getUser().getEmailAddress()
+    );
+  }
+
+
+
+
 
   /**
    * Retrieves a list of all events from the event repository
@@ -152,7 +180,8 @@ public class EventService {
 
   /**
    * Updates an existing event with the provided event ID using details from the updated EventDTO
-   * @param eventId The unique identifier of the event to be updated
+   *
+   * @param eventId         The unique identifier of the event to be updated
    * @param updatedEventDTO The EventDTO containing updated information to be applied to the existing event.
    * @return The updated EventDTO object representing the modified event after being saved back in the event repository.
    */
@@ -199,18 +228,14 @@ public class EventService {
    * @param userId  The unique identifier of the user who is RSVPing.
    * @return The created Participant object after being saved in the participant repository.
    */
-  public RSVPResponse rsvpToEvent(Long eventId, Long userId) {
+  public EventResponseDto rsvpToEvent(Long eventId, Long userId) {
     validateEventId(eventId);
 
-    EventDTO eventDTO = getEventById(eventId)
+    Event event = getEventById(eventId)
       .orElseThrow(() -> new InformationNotFoundException("Event with ID: " + eventId + ", not found"));
 
-    Event event = convertEventDTOToEvent(eventDTO);
-
-    // Retrieve user from the database
     User user = getUserById(userId);
 
-    // Check if the user is already a participant in the event
     boolean isAlreadyParticipant = event.getParticipants().stream()
       .anyMatch(participant -> participant.getUser().getId().equals(userId));
 
@@ -218,27 +243,18 @@ public class EventService {
       throw new IllegalArgumentException("User with ID: " + userId + " is already a participant in this event");
     }
 
-    // Create a new participant
     Participant participant = new Participant();
     participant.setUser(user);
     participant.setEvent(event);
+    participantRepository.save(participant);
 
-    // Save participant to the repository
-    Participant savedParticipant = participantRepository.save(participant);
-//    RSVPResponse rsvpResponse = new RSVPResponse();
-//    rsvpResponse.setParticipantId(savedParticipant.getId());
-//    rsvpResponse.setEventName(event.getName());
-//    rsvpResponse.setEventId(event.getId());
-//    rsvpResponse.setVenue(event.getVenue());
-//    rsvpResponse.setDescription(event.getDescription());
-//    rsvpResponse.setUserName(user.getUserName());
-//    rsvpResponse.setEmailAddress(user.getEmailAddress());
-    return createRSVPResponse(savedParticipant);
+    return createEventResponseDto(event, user);
   }
 
   /**
    * Removes a participant from an event based on their unique participant ID
-   * @param eventId The unique identifier of the event from which the participant should be removed.
+   *
+   * @param eventId       The unique identifier of the event from which the participant should be removed.
    * @param participantId The unique identifier of the participant to be removed from the event.
    */
   public void removeParticipantFromEvent(Long eventId, Long participantId) {
@@ -260,11 +276,11 @@ public class EventService {
    * @param eventId The unique identifier of the even to be retrieved
    * @return An Optional containing the Event object if found, or an empty Optional if not found
    */
-  public Optional<EventDTO> getEventById(Long eventId) {
+  public Optional<Event> getEventById(Long eventId) {
     Optional<Event> eventOptional = eventRepository.findById(eventId);
     if (eventOptional.isPresent()) {
       Event event = eventOptional.get();
-      return Optional.of(new EventDTO(event));
+      return Optional.of(event);
     } else {
       throw new InformationNotFoundException("Event with ID: " + eventId + ", not found");
     }
@@ -281,4 +297,3 @@ public class EventService {
     eventRepository.deleteById(eventId);
   }
 }
-

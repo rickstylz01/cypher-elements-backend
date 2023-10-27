@@ -4,7 +4,7 @@ import com.example.cebackend.exceptions.InformationExistException;
 import com.example.cebackend.exceptions.InformationNotFoundException;
 import com.example.cebackend.models.Event;
 import com.example.cebackend.models.response.EventDTO;
-import com.example.cebackend.models.response.RSVPResponse;
+import com.example.cebackend.models.response.EventResponseDto;
 import com.example.cebackend.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,7 +48,7 @@ public class EventController {
   @PostMapping("/{eventId}/rsvp/{userId}/")
   public ResponseEntity<?> rsvpToEvent(@PathVariable Long eventId, @PathVariable Long userId) {
     try {
-      RSVPResponse participant = eventService.rsvpToEvent(eventId, userId);
+      EventResponseDto participant = eventService.rsvpToEvent(eventId, userId);
       message.put("message", "success, RSVP confirmed");
       message.put("data", participant);
       return new ResponseEntity<>(message, HttpStatus.CREATED);
@@ -73,12 +73,12 @@ public class EventController {
     return new ResponseEntity<>(message, HttpStatus.OK);
   }
 
-  // Get an event by it's ID
+  // Get an event by its ID
   @GetMapping("/{eventId}/")
   public ResponseEntity<HashMap<String, Object>> getEventById(@PathVariable Long eventId) {
     HashMap<String, Object> response = new HashMap<>();
     try {
-      Optional<EventDTO> eventDTO = eventService.getEventById(eventId);
+      Optional<Event> eventDTO = eventService.getEventById(eventId);
       response.put("message", "success");
       response.put("data", eventDTO);
       return new ResponseEntity<>(response, HttpStatus.OK);
@@ -111,7 +111,7 @@ public class EventController {
     } catch (IllegalArgumentException e) {
       return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     } catch (Exception e) {
-      return new ResponseEntity<>("Error deleteing event", HttpStatus.INTERNAL_SERVER_ERROR);
+      return new ResponseEntity<>("Error deleting event", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
